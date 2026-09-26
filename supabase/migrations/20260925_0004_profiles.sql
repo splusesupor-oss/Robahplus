@@ -3,7 +3,7 @@ create table app.profile (
   phone           text primary key references app.identity(phone) on delete cascade,
   user_id         uuid not null unique,
   name            text not null default '',
-  username        citext unique check (username is null or username ~ '^[a-zA-Z0-9_.]{3,32}$'),
+  username        app.citext unique check (username is null or username ~ '^[a-zA-Z0-9_.]{3,32}$'),
   bio             text not null default '' check (length(bio) <= 500),
   avatar_url      text check (avatar_url is null or length(avatar_url) <= 2048),
   avatar_path     text,                                  -- storage object path, preferred over a raw URL
@@ -22,14 +22,14 @@ for each row execute function app.touch_updated_at();
 -- username is global and unique: claim it atomically so no client can take a taken handle.
 create function app.set_username(p_username text) returns void
 language plpgsql security definer
-set search_path = public, app
+set search_path = public, app, extensions
 as $$
 declare v_phone text := app.current_phone();
 begin
   if v_phone = '' then raise exception 'auth required' using errcode = '42501'; end if;
   if p_username !~ '^[a-zA-Z0-9_.]{3,32}$' then raise exception 'invalid username' using errcode = '22023'; end if;
   update app.profile
-     set username = p_username::citext, profile_revision = profile_revision + 1
+     set username = p_username::app.citext, profile_revision = profile_revision + 1
    where phone = v_phone;
 end $$;
 

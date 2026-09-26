@@ -20,7 +20,7 @@ create table app.game_reward_rule (
 );
 
 create table app.game_session (
-  id           uuid primary key default gen_random_uuid(),
+  id           uuid primary key default app.gen_random_uuid(),
   game_code    text not null references app.game(code) on delete restrict,
   phone        text not null references app.identity(phone) on delete cascade,
   group_id     text references app.group(id) on delete set null,
@@ -33,7 +33,7 @@ create table app.game_session (
 create index game_session_phone_idx on app.game_session (phone, started_at desc);
 
 create table app.game_reward_grant (
-  id            uuid primary key default gen_random_uuid(),
+  id            uuid primary key default app.gen_random_uuid(),
   session_id    uuid not null references app.game_session(id) on delete cascade,
   phone         text not null references app.identity(phone) on delete cascade,
   game_code     text not null,
@@ -50,7 +50,7 @@ create table app.game_reward_grant (
 -- A client may only say "session X finished".  The currency, the amount and the per-day cap
 -- are all looked up server-side; the claim is idempotent per session.
 create function app.game_claim_reward(p_session uuid, p_request_id text default null) returns jsonb
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 declare
   s   app.game_session;
   r   app.game_reward_rule;
@@ -118,7 +118,7 @@ end $$;
 
 -- ── ranking (legacy: ranking:user:<phone>, ranking:history:*, freeze cron 35 20 * * *) ──
 create table app.ranking_period (
-  id          uuid primary key default gen_random_uuid(),
+  id          uuid primary key default app.gen_random_uuid(),
   type        app.period_type not null,
   period_key  text not null,                     -- '2026-W39' / '2026-09'
   frozen_at   timestamptz,
@@ -145,7 +145,7 @@ create table app.ranking_claim (
 );
 
 create function app.ranking_snapshot(p_type app.period_type default 'weekly') returns void
-language sql security definer set search_path = public, app as $$
+language sql security definer set search_path = public, app, extensions as $$
   insert into app.ranking_period (type, period_key)
   values (p_type, to_char(now(), case when p_type = 'weekly' then 'IYYY-"W"IW' else 'IYYY-MM' end))
   on conflict (type, period_key) do nothing;
@@ -159,7 +159,7 @@ language sql security definer set search_path = public, app as $$
 $$;
 
 create function app.ranking_prize_for(r integer) returns integer
-language sql immutable set search_path = public, app as $$
+language sql immutable set search_path = public, app, extensions as $$
   select case r when 1 then 100 when 2 then 70 when 3 then 50 else 0 end   -- legacy RANKING_PRIZES
 $$;
 

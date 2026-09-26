@@ -1,6 +1,6 @@
 -- 0007 · private chats and likes  (legacy KV: dm:<a>:<b>, likes)  · contacts/blocks live in 0002
 create table app.dm_thread (
-  id            uuid primary key default gen_random_uuid(),
+  id            uuid primary key default app.gen_random_uuid(),
   phone_a       text not null references app.identity(phone) on delete cascade,
   phone_b       text not null references app.identity(phone) on delete cascade,
   created_at    timestamptz not null default now(),
@@ -8,7 +8,7 @@ create table app.dm_thread (
 );
 
 create table app.dm_message (
-  id            uuid primary key default gen_random_uuid(),
+  id            uuid primary key default app.gen_random_uuid(),
   thread_id     uuid not null references app.dm_thread(id) on delete cascade,
   sender_phone  text not null references app.identity(phone) on delete set null,
   body          text not null check (length(body) <= 4000),
@@ -31,7 +31,7 @@ create table app.dm_like (
 );
 
 create function app.dm_participants(t uuid) returns text[]
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select array[phone_a, phone_b] from app.dm_thread where id = t
 $$;
 
@@ -62,7 +62,7 @@ create policy dm_edit_own on app.dm_message for update to authenticated
 create policy dm_soft_delete on app.dm_message for delete to authenticated using (false);
 
 create function app.dm_mark_deleted(m uuid) returns void
-language sql security definer set search_path = public, app as $$
+language sql security definer set search_path = public, app, extensions as $$
   update app.dm_message set deleted_for = array_append(deleted_for, app.current_phone()) where id = m;
 $$;
 

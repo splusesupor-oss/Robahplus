@@ -40,7 +40,7 @@ insert into app.diamond_package (id, label, diamonds, coins_required, price_toma
 on conflict (id) do nothing;
 
 create function app.wallet_packages() returns jsonb
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select coalesce(jsonb_agg(jsonb_build_object(
            'id', p.id, 'label', p.label, 'diamonds', p.diamonds,
            'coinsRequired', p.coins_required, 'priceToman', p.price_toman) order by p.position), '[]'::jsonb)
@@ -53,7 +53,7 @@ grant execute on function app.wallet_packages() to anon, authenticated;
 -- 2. purchase bookkeeping (idempotency shared with the wallet ledger)
 -- ---------------------------------------------------------------------------
 create table app.diamond_purchase (
-  id            uuid primary key default gen_random_uuid(),
+  id            uuid primary key default app.gen_random_uuid(),
   phone         text not null references app.identity(phone) on delete cascade,
   package_id    text not null references app.diamond_package(id),
   payment_ref   text,
@@ -85,7 +85,7 @@ comment on table app.diamond_purchase is 'One row per pack purchase attempt; req
 create function app.buy_diamond_pack(p_package text, p_request_id text, p_payment_ref text default null)
 returns jsonb
 language plpgsql security definer
-set search_path = public, app
+set search_path = public, app, extensions
 as $$
 declare
   v_self   text := app.current_phone();
@@ -188,7 +188,7 @@ end $$;
 -- snapshot helper with an explicit phone (security definer, used by the purchase flow above;
 -- revoked from clients on purpose — the UI uses app.wallet_snapshot(), which is JWT-scoped)
 create or replace function app.wallet_snapshot_for(p_phone text) returns jsonb
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select to_jsonb(w) from app.wallet w where w.phone = p_phone
 $$;
 revoke all on function app.wallet_snapshot_for(text) from public, anon, authenticated;
@@ -203,7 +203,7 @@ grant execute on function app.buy_diamond_pack(text, text, text) to authenticate
 create or replace function app.set_profile(
   p_name text default null, p_bio text default null, p_avatar_path text default null
 ) returns jsonb
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 declare v_phone text := app.current_phone(); v app.profile;
 begin
   if v_phone = '' then raise exception 'auth required' using errcode = '42501'; end if;
@@ -221,25 +221,25 @@ grant execute on function app.set_profile(text, text, text) to authenticated;
 
 -- username: friendly error instead of a raw unique-violation, and it never touches role
 create or replace function app.set_username(p_username text) returns void
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 declare v_phone text := app.current_phone();
 begin
   if v_phone = '' then raise exception 'auth required' using errcode = '42501'; end if;
   if p_username is null or p_username !~ '^[a-zA-Z0-9_.]{3,32}$' then
     raise exception 'invalid username' using errcode = '22023';
   end if;
-  if exists (select 1 from app.profile p where p.username = p_username::citext and p.phone <> v_phone) then
+  if exists (select 1 from app.profile p where p.username = p_username::app.citext and p.phone <> v_phone) then
     raise exception 'username_taken' using errcode = '23505';
   end if;
   update app.profile
-     set username = p_username::citext, profile_revision = profile_revision + 1
+     set username = p_username::app.citext, profile_revision = profile_revision + 1
    where phone = v_phone;
 end $$;
 
 -- Belt and braces on top of the column-grant + policy: a client may only ever create its own
 -- profile as a plain `user`, and may never move a profile onto another identity.
 create or replace function app.check_profile_privilege() returns trigger
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 begin
   -- IMPORTANT: a BEFORE trigger that returns NULL silently drops the row (INSERT 0 0 with no
   -- error), so every path here must return NEW.  Guard triggers in this schema follow the same rule.

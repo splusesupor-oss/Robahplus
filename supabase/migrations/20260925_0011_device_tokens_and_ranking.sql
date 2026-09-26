@@ -34,7 +34,7 @@ grant select on app.ai_character to authenticated;
 -- is what makes a double claim impossible; the amount is looked up, never accepted from the call.
 create function app.claim_ranking_prize(p_period_type app.period_type default 'weekly', p_period_key text default null)
 returns jsonb
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 declare
   v_phone text := app.current_phone();
   pr      app.ranking_period;
@@ -78,7 +78,7 @@ exception when unique_violation then
 end $$;
 
 create function app.freeze_ranking_period(p_period_type app.period_type default 'weekly') returns jsonb
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 declare pr app.ranking_period;
 begin
   -- scheduled (pg_cron / a CI job with the service key): marks the current period settled so its

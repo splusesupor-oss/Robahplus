@@ -52,6 +52,7 @@ if [[ -z "${DATABASE_URL:-}" ]]; then
     echo "· initdb → $PGDATA"
     rm -rf "$PGDATA"; mkdir -p "$PGDATA"
     "$PGBIN/initdb" -D "$PGDATA" -U "$RUNAS" --auth=trust -E UTF8 --locale=C >/dev/null
+    chmod 700 "$PGDATA"   # a workspace snapshot/restore can widen this, and postgres then refuses to boot
   fi
   if ! "$PGBIN/pg_isready" -h /tmp -p "$PORT" -q 2>/dev/null; then
     echo "· starting postgres on port $PORT"
@@ -65,7 +66,8 @@ fi
 echo "· resetting"
 psql_run -c "set client_min_messages to warning; drop schema if exists app cascade; create schema if not exists app;" >/dev/null
 psql_run -c "truncate storage.objects, storage.buckets; delete from auth.users;" >/dev/null 2>&1 || true
-psql_run -c "create extension if not exists pgcrypto; create extension if not exists citext;" >/dev/null
+# extensions are created by migration 0001 (`with schema app`), deliberately NOT pre-created here:
+# doing so dropped them into `public` and made every `app.*` helper lookup fail on a fresh cluster.
 
 echo "· applying local Supabase shims"
 psql_run -f supabase/tests/00_local_supabase_shims.sql >/dev/null

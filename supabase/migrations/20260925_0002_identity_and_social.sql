@@ -34,7 +34,7 @@ create table app.block (
 -- The phone claim lives in the JWT; `app.identity` is the fallback for tokens minted before
 -- the claim existed.  It is defined here (not in 0001) because it reads the table above.
 create function app.current_phone() returns text
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   -- Canonical local form 09XXXXXXXXX, normalised from whatever the token carries:
   -- Supabase stores phone in E.164 ("+989123456789"); legacy Robah Plus used 09123456789 and
   -- at one point a "98-9123456789" shape.  Never accepted from client input — JWT only.
@@ -58,7 +58,7 @@ $$;
 -- Blocks and contacts are private.  Any policy in another table that has to read them must go
 -- through a SECURITY DEFINER helper, otherwise RLS on app.block hides the row from the policy.
 create function app.is_blocked_between(a text, b text) returns boolean
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select exists (select 1 from app.block
                   where (blocker_phone, blocked_phone) in ((a, b), (b, a)))
 $$;

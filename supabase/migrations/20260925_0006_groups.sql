@@ -39,7 +39,7 @@ for each row execute function app.touch_updated_at();
 -- statement regardless of role, so "a member can never make themselves admin/owner" is true even
 -- if a policy is ever loosened.  Moderators and service_role are the only ways to change a role.
 create function app.check_member_role_change() returns trigger
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 begin
   -- "no JWT at all" = a server-side statement (migration, fixture, direct SQL) → allowed
   if app.is_service_call() then
@@ -69,7 +69,7 @@ for each row execute function app.check_member_role_change();
 
 -- exactly one owner per group
 create function app.check_group_owner() returns trigger
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 begin
   if new.role <> 'owner' then return new; end if;
   if (select count(*) from app.group_member m
@@ -83,7 +83,7 @@ create trigger group_owner_unique after insert or update of role on app.group_me
 for each row execute function app.check_group_owner();
 
 create table app.group_message (
-  id            uuid primary key default gen_random_uuid(),
+  id            uuid primary key default app.gen_random_uuid(),
   group_id      text not null references app.group(id) on delete cascade,
   sender_phone  text references app.identity(phone) on delete set null,
   body          text not null check (length(body) <= 4000),
@@ -116,14 +116,14 @@ create table app.group_seen (
 
 -- ── helpers used by policies (security definer: they may read tables the caller cannot) ──
 create function app.is_group_banned(g text) returns boolean
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select exists (select 1 from app.group_ban b
                   where b.group_id = g and b.phone = app.current_phone()
                     and (b.expires_at is null or b.expires_at > now()))
 $$;
 
 create function app.is_group_member(g text) returns boolean
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select exists (
     select 1 from app.group_member m
      where m.group_id = g and m.phone = app.current_phone()
@@ -133,7 +133,7 @@ language sql stable security definer set search_path = public, app as $$
 $$;
 
 create function app.group_role(g text) returns app.role_tier
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select coalesce(
     (select m.role from app.group_member m where m.group_id = g and m.phone = app.current_phone()),
     case when exists (select 1 from app.group gp where gp.id = g and gp.owner_phone = app.current_phone())
@@ -142,12 +142,12 @@ language sql stable security definer set search_path = public, app as $$
 $$;
 
 create function app.can_moderate_group(g text) returns boolean
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select app.is_admin() or app.group_role(g) in ('owner','admin')
 $$;
 
 create function app.is_group_muted(g text) returns boolean
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   -- a muted member may read but not post; mirrors the legacy modstate `muteUntil`
   select exists (select 1 from app.group_member m
                   where m.group_id = g and m.phone = app.current_phone()

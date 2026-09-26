@@ -3,8 +3,8 @@
 
 create schema if not exists app;
 
-create extension if not exists pgcrypto;
-create extension if not exists citext;
+create extension if not exists pgcrypto with schema app;
+create extension if not exists citext with schema app;
 
 -- ── enums ────────────────────────────────────────────────────────────────────
 create type app.currency     as enum ('diamond','fox_coin');
@@ -39,7 +39,7 @@ language sql stable as $$ select (app.jwt_role() = 'service_role') $$;
 
 create function app.is_admin() returns boolean
 language sql stable security definer
-set search_path = public, app
+set search_path = public, app, extensions
 as $$
   select coalesce(
     (coalesce(nullif(current_setting('request.jwt.claims', true), ''), '{}')::jsonb

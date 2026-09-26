@@ -1,6 +1,6 @@
 -- 0010 · media metadata + storage policies  (legacy: DO media-v2:<id> + KV media:/media-meta:)
 create table app.media (
-  id           uuid primary key default gen_random_uuid(),
+  id           uuid primary key default app.gen_random_uuid(),
   owner_phone  text not null references app.identity(phone) on delete cascade,
   bucket       text not null default 'fox-media' check (bucket in ('fox-media','fox-avatars','fox-group-photos')),
   object_path  text not null unique,

@@ -20,7 +20,7 @@ create table app.wallet (
 );
 
 create table app.wallet_transaction (
-  id              uuid primary key default gen_random_uuid(),
+  id              uuid primary key default app.gen_random_uuid(),
   phone           text not null references app.identity(phone) on delete cascade,
   kind            app.tx_kind not null,
   currency        app.currency not null,
@@ -57,7 +57,7 @@ create function app.wallet_apply(
   p_meta jsonb default '{}'::jsonb,
   p_phone text default null                     -- service role only (admin grants)
 ) returns jsonb
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 declare
   v_phone   text := coalesce(nullif(p_phone, ''), app.current_phone());
   v_balance bigint := 0;
@@ -77,7 +77,7 @@ begin
     end if;
   end if;
 
-  v_fp := encode(digest(concat_ws('|', coalesce(p_request_id, ''), p_currency, p_kind, p_delta::text,
+  v_fp := encode(app.digest(concat_ws('|', coalesce(p_request_id, ''), p_currency, p_kind, p_delta::text,
                                   coalesce(p_reference_id, ''), coalesce(p_group_id, '')), 'sha256'), 'hex');
 
   -- idempotency: the same (phone, request_id, fingerprint) returns the original result verbatim
@@ -142,7 +142,7 @@ end $$;
 create function app.wallet_credit(p_currency app.currency, p_amount bigint, p_kind app.tx_kind,
   p_group_id text default null, p_game_code text default null, p_reference_id text default null,
   p_request_id text default null, p_meta jsonb default '{}'::jsonb) returns jsonb
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 begin
   if coalesce(p_amount, 0) <= 0 then return jsonb_build_object('ok', false, 'error', 'amount_must_be_positive'); end if;
   return app.wallet_apply(p_currency, p_amount, p_kind, p_group_id, p_game_code, p_reference_id, p_request_id, p_meta, null);
@@ -151,7 +151,7 @@ end $$;
 create function app.wallet_debit(p_currency app.currency, p_amount bigint, p_kind app.tx_kind,
   p_group_id text default null, p_game_code text default null, p_reference_id text default null,
   p_request_id text default null, p_meta jsonb default '{}'::jsonb) returns jsonb
-language plpgsql security definer set search_path = public, app as $$
+language plpgsql security definer set search_path = public, app, extensions as $$
 begin
   if coalesce(p_amount, 0) <= 0 then return jsonb_build_object('ok', false, 'error', 'amount_must_be_positive'); end if;
   return app.wallet_apply(p_currency, -p_amount, p_kind, p_group_id, p_game_code, p_reference_id, p_request_id, p_meta, null);
@@ -159,7 +159,7 @@ end $$;
 
 -- current snapshot for the UI (never trusts a client-side number)
 create function app.wallet_snapshot() returns jsonb
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select jsonb_build_object(
     'phone', w.phone, 'diamonds', w.diamonds, 'foxCoins', w.fox_coins,
     'totalDiamondsEarned', w.total_diamonds_earned, 'totalFoxCoinsEarned', w.total_fox_coins_earned,
@@ -175,7 +175,7 @@ create table if not exists app.config_secret_ref (
   value text not null
 );
 create or replace function app.secret(k text) returns text
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select value from app.config_secret_ref where key = k
 $$;
 

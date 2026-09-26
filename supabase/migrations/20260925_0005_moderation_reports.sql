@@ -2,7 +2,7 @@
 -- Server-side truth for moderation.  Nothing here is writable by a normal client:
 -- a user can never lift their own restriction or flip their own role.
 create table app.report (
-  id             uuid primary key default gen_random_uuid(),
+  id             uuid primary key default app.gen_random_uuid(),
   reporter_phone text not null references app.identity(phone) on delete cascade,
   target_phone   text references app.identity(phone) on delete cascade,
   target_message uuid,                              -- group_message.id or dm_message.id
@@ -42,7 +42,7 @@ create index audit_time_idx on app.audit_log (created_at desc);
 -- used by the web/APK to render the "حساب شما محدود شده است" banner
 create function app.current_restriction()
 returns table (restricted boolean, kind text, reason text, expires_at timestamptz, permanent boolean)
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select true, r.kind::text, r.reason, r.expires_at, (r.expires_at is null)::boolean
     from app.user_restriction r
    where r.phone = app.current_phone()
@@ -52,7 +52,7 @@ language sql stable security definer set search_path = public, app as $$
 $$;
 
 create function app.is_banned(p text) returns boolean
-language sql stable security definer set search_path = public, app as $$
+language sql stable security definer set search_path = public, app, extensions as $$
   select exists (select 1 from app.user_restriction r
                   where r.phone = p and r.kind = 'ban'
                     and (r.expires_at is null or r.expires_at > now()))
