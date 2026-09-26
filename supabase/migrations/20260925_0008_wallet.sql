@@ -20,7 +20,7 @@ create table app.wallet (
 );
 
 create table app.wallet_transaction (
-  id              uuid primary key default app.gen_random_uuid(),
+  id              uuid primary key default gen_random_uuid(),
   phone           text not null references app.identity(phone) on delete cascade,
   kind            app.tx_kind not null,
   currency        app.currency not null,
@@ -77,7 +77,7 @@ begin
     end if;
   end if;
 
-  v_fp := encode(app.digest(concat_ws('|', coalesce(p_request_id, ''), p_currency, p_kind, p_delta::text,
+  v_fp := encode(digest(concat_ws('|', coalesce(p_request_id, ''), p_currency, p_kind, p_delta::text,
                                   coalesce(p_reference_id, ''), coalesce(p_group_id, '')), 'sha256'), 'hex');
 
   -- idempotency: the same (phone, request_id, fingerprint) returns the original result verbatim

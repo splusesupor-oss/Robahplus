@@ -20,7 +20,7 @@ create table app.game_reward_rule (
 );
 
 create table app.game_session (
-  id           uuid primary key default app.gen_random_uuid(),
+  id           uuid primary key default gen_random_uuid(),
   game_code    text not null references app.game(code) on delete restrict,
   phone        text not null references app.identity(phone) on delete cascade,
   group_id     text references app.group(id) on delete set null,
@@ -33,7 +33,7 @@ create table app.game_session (
 create index game_session_phone_idx on app.game_session (phone, started_at desc);
 
 create table app.game_reward_grant (
-  id            uuid primary key default app.gen_random_uuid(),
+  id            uuid primary key default gen_random_uuid(),
   session_id    uuid not null references app.game_session(id) on delete cascade,
   phone         text not null references app.identity(phone) on delete cascade,
   game_code     text not null,
@@ -118,7 +118,7 @@ end $$;
 
 -- ── ranking (legacy: ranking:user:<phone>, ranking:history:*, freeze cron 35 20 * * *) ──
 create table app.ranking_period (
-  id          uuid primary key default app.gen_random_uuid(),
+  id          uuid primary key default gen_random_uuid(),
   type        app.period_type not null,
   period_key  text not null,                     -- '2026-W39' / '2026-09'
   frozen_at   timestamptz,

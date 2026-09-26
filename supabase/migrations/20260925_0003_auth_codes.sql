@@ -29,7 +29,7 @@ create function app.hash_code(p_code text) returns text
 language sql security definer set search_path = public, app, extensions as $$
   -- reads the pepper straight from the config table: this function is created before app.secret()
   -- exists (wallet migration), and it must stay usable by the auth edge function only.
-  select encode(app.digest(coalesce(p_code,'') || '|' ||
+  select encode(digest(coalesce(p_code,'') || '|' ||
                        coalesce((select value from app.config_secret_ref where key = 'FOX_CODE_PEPPER'), 'dev-pepper-change-me'),
                        'sha256'), 'hex')
 $$;

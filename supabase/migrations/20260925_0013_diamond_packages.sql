@@ -53,7 +53,7 @@ grant execute on function app.wallet_packages() to anon, authenticated;
 -- 2. purchase bookkeeping (idempotency shared with the wallet ledger)
 -- ---------------------------------------------------------------------------
 create table app.diamond_purchase (
-  id            uuid primary key default app.gen_random_uuid(),
+  id            uuid primary key default gen_random_uuid(),
   phone         text not null references app.identity(phone) on delete cascade,
   package_id    text not null references app.diamond_package(id),
   payment_ref   text,
@@ -228,11 +228,11 @@ begin
   if p_username is null or p_username !~ '^[a-zA-Z0-9_.]{3,32}$' then
     raise exception 'invalid username' using errcode = '22023';
   end if;
-  if exists (select 1 from app.profile p where p.username = p_username::app.citext and p.phone <> v_phone) then
+  if exists (select 1 from app.profile p where p.username = p_username::citext and p.phone <> v_phone) then
     raise exception 'username_taken' using errcode = '23505';
   end if;
   update app.profile
-     set username = p_username::app.citext, profile_revision = profile_revision + 1
+     set username = p_username::citext, profile_revision = profile_revision + 1
    where phone = v_phone;
 end $$;
 

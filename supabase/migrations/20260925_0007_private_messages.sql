@@ -1,6 +1,6 @@
 -- 0007 · private chats and likes  (legacy KV: dm:<a>:<b>, likes)  · contacts/blocks live in 0002
 create table app.dm_thread (
-  id            uuid primary key default app.gen_random_uuid(),
+  id            uuid primary key default gen_random_uuid(),
   phone_a       text not null references app.identity(phone) on delete cascade,
   phone_b       text not null references app.identity(phone) on delete cascade,
   created_at    timestamptz not null default now(),
@@ -8,7 +8,7 @@ create table app.dm_thread (
 );
 
 create table app.dm_message (
-  id            uuid primary key default app.gen_random_uuid(),
+  id            uuid primary key default gen_random_uuid(),
   thread_id     uuid not null references app.dm_thread(id) on delete cascade,
   sender_phone  text not null references app.identity(phone) on delete set null,
   body          text not null check (length(body) <= 4000),

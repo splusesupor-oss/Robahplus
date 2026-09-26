@@ -83,7 +83,7 @@ create trigger group_owner_unique after insert or update of role on app.group_me
 for each row execute function app.check_group_owner();
 
 create table app.group_message (
-  id            uuid primary key default app.gen_random_uuid(),
+  id            uuid primary key default gen_random_uuid(),
   group_id      text not null references app.group(id) on delete cascade,
   sender_phone  text references app.identity(phone) on delete set null,
   body          text not null check (length(body) <= 4000),

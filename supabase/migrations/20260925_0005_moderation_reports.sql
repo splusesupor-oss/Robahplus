@@ -2,7 +2,7 @@
 -- Server-side truth for moderation.  Nothing here is writable by a normal client:
 -- a user can never lift their own restriction or flip their own role.
 create table app.report (
-  id             uuid primary key default app.gen_random_uuid(),
+  id             uuid primary key default gen_random_uuid(),
   reporter_phone text not null references app.identity(phone) on delete cascade,
   target_phone   text references app.identity(phone) on delete cascade,
   target_message uuid,                              -- group_message.id or dm_message.id

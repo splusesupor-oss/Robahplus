@@ -3,8 +3,8 @@
 
 create schema if not exists app;
 
-create extension if not exists pgcrypto with schema app;
-create extension if not exists citext with schema app;
+create extension if not exists pgcrypto;
+create extension if not exists citext;
 
 -- ── enums ────────────────────────────────────────────────────────────────────
 create type app.currency     as enum ('diamond','fox_coin');
