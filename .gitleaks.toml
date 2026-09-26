@@ -1,0 +1,40 @@
+# Gitleaks configuration for Robah Plus.   (https://github.com/gitleaks/gitleaks)
+#
+# Only the allowlist below is ours; every other rule is gitleaks' default set.  Each entry is a
+# documented false positive — adding a line here requires the comment that explains the string.
+
+title = "Robah Plus secret scan"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known non-secrets: localStorage key names, template placeholders, redaction markers"
+regexes = [
+  # whole-line form gitleaks reports for the localStorage keys below (rule: generic-api-key)
+  '''(?:CAMP|REC|PROG)_KEY\s*=\s*'fox_[a-z0-9]+_v[0-9]+' ''',
+  '''fox_[a-z0-9]+_v[0-9]+''',
+  '''^fox_[a-z0-9]+_v[0-9]+$''',
+  '''^(?:REDACTED|CHANGE-?ME|YOUR_PROJECT_ID|none|example)$''',
+  '''<REDACTED_[A-Z_]+>''',
+]
+# Vendored/unmodifiable client sources: the legacy Worker snapshot and the single-file web app
+# derived from it.  Their credential hygiene is enforced by `node tools/04-check-secrets.mjs`
+# (12 targeted rule groups, including PEM/JWT/token/connection-string shapes) plus the manual
+# audit in docs/AUDIT.md, because gitleaks' stock `generic-api-key` rule cannot be allowlisted
+# from here (its own rule-level allowlist wins) and the app's three localStorage keys
+# (fox_bow_campaign_v1 / fox_sudoku_records_v1 / fox_timber_solo_v1) trip it on every copy.
+paths = [
+  # rule names + FNV fingerprints only, never values (written by tools/01-extract-legacy.mjs)
+  '''^tools/\.secret-findings\.json$''',
+  # prose that names the placeholders
+  '''^legacy/BUNDLE-NOTES\.md$''',
+  # redacted legacy bundle (placeholders already applied)
+  '''^legacy/worker\.raw\.js$''',
+  # derived views of the shipped client; the same content, split for reading/linting
+  '''^apps/web/(golden|build|app|styles)/.*''',
+]
+# The redacted legacy Worker snapshot (legacy/worker.raw.js) is a 50k-line minified bundle whose
+# credential literals were already replaced by <REDACTED_*> placeholders.  Entropy rules cannot
+# tell those from prose, so that file is covered by the targeted rules of
+# `node tools/04-check-secrets.mjs` instead, and the audit result is recorded in docs/AUDIT.md.

@@ -1,0 +1,83 @@
+name: CI
+
+# Every check that can run without touching an account: schema + security tests, the derived-view
+# proof for the shipped client, the repo's own secret gate, and Deno type-check/lint on the edge
+# functions.  Nothing here needs a secret, so it also runs on forks and on feature branches.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: schema · client · functions · secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: fox
+          POSTGRES_PASSWORD: fox
+          POSTGRES_DB: robah
+        ports: ['55432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGUSER: fox
+      PGPASSWORD: fox
+      PGDB: robah
+      DATABASE_URL: postgres://${{ env.PGUSER }}:${{ env.PGPASSWORD }}@127.0.0.1:55432/${{ env.PGDB }}
+      FOX_PG_AUTOINSTALL: '0'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Edge functions — type-check, lint, format
+        run: deno task verify
+
+      - name: Client — derived views must still match the golden file
+        run: node tools/02-extract-web.mjs --check
+
+      - name: Client — build the deployable dir, prove it parses and carries no secrets
+        run: |
+          npm run build
+          npm run check:client
+
+      - name: Database — apply all migrations + run the security tests
+        run: bash tools/test-db.sh
+
+      - name: Secret scan (repo's own gate)
+        run: node tools/04-check-secrets.mjs
+
+      - name: Secret scan (gitleaks on the working tree, when the binary can be installed)
+        run: |
+          set -e
+          v=8.23.0
+          curl -fsSL -o /tmp/gl.tgz "https://github.com/gitleaks/gitleaks/releases/download/v${v}/gitleaks_${v}_linux_x64.tar.gz"
+          tar -xzf /tmp/gl.tgz -C /tmp gitleaks
+          /tmp/gitleaks dir . --no-banner --redact --log-opts=
+
+      - name: Upload the built client (preview artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: apps/web/build/index.html
+          if-no-files-found: error
+          retention-days: 7

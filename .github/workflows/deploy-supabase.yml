@@ -1,0 +1,92 @@
+name: Deploy — Supabase
+
+# Production = `main`.  This workflow applies the migrations in supabase/migrations/ to the linked
+# project and publishes the edge functions.  It is inert until you add the two secrets
+# (SUPABASE_PROJECT_REF, SUPABASE_MANAGEMENT_TOKEN) — deliberate: a half-configured deploy must not
+# be able to touch a live project, and CI on pull requests still validates everything else.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/**'
+      - 'tools/test-db.sh'
+      - '.github/workflows/deploy-supabase.yml'
+  workflow_dispatch:
+    inputs:
+      run_tests_only:
+        description: 'Run the schema/security tests but do not deploy'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-supabase
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: migrate + publish edge functions
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production          # add required-reviewers here if you want a human gate
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN }}
+      PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      FOX_PG_AUTOINSTALL: '0'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Refuse to run without a linked project
+        run: |
+          if [ -z "${SUPABASE_PROJECT_REF:-}" ] || [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+            echo "SUPABASE_PROJECT_REF and/or SUPABASE_MANAGEMENT_TOKEN are missing in GitHub Secrets."
+            echo "Nothing was deployed. Add them (docs/SUPABASE.md) and re-run this workflow."
+            exit 1
+          fi
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Validate the edge functions before touching the project
+        run: deno task verify
+
+      - name: Install the Supabase CLI
+        run: |
+          set -e
+          v=2.45.5
+          curl -fsSL -o /tmp/sb.tgz "https://github.com/supabase/cli/releases/download/v${v}/supabase_${v}_linux_amd64.tar.gz"
+          tar -xzf /tmp/sb.tgz -C /usr/local/bin supabase
+          supabase --version
+
+      - name: Security tests against a throwaway Postgres
+        env:
+          FOX_PG_AUTOINSTALL: '1'   # installs the server package on the runner; the harness owns the cluster
+        run: bash tools/test-db.sh
+
+      - name: Link the project
+        if: ${{ github.event.inputs.run_tests_only != 'true' }}
+        run: supabase link --project-ref "$PROJECT_REF"
+
+      - name: Apply migrations
+        if: ${{ github.event.inputs.run_tests_only != 'true' }}
+        run: supabase db push --project-ref "$PROJECT_REF" --yes
+
+      - name: Publish edge functions
+        if: ${{ github.event.inputs.run_tests_only != 'true' }}
+        run: supabase functions deploy --project-ref "$PROJECT_REF"
+
+      - name: Report
+        if: always()
+        run: |
+          echo "### Supabase deploy" >> "$GITHUB_STEP_SUMMARY"
+          echo "- migrations: \`supabase db push\` against \`$PROJECT_REF\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- functions: auth, wallet, group, messages, rewards, media, moderation, ai, notifications" >> "$GITHUB_STEP_SUMMARY"
+          echo "- secrets are managed in the Supabase dashboard (docs/SUPABASE.md §4), never in this repo" >> "$GITHUB_STEP_SUMMARY"

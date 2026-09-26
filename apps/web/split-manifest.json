@@ -1,0 +1,371 @@
+{
+ "golden": "apps/web/golden/index.html",
+ "generatedBy": "tools/02-extract-web.mjs",
+ "goldenBytes": 1860553,
+ "extractedBytes": 1697542,
+ "note": "Derived views for reading, diffing and linting. The golden file stays authoritative until the Supabase cutover; edit apps/web/golden/index.html (or the legacy patch_*.py pipeline) and re-run this tool.",
+ "styles": [
+  {
+   "id": "s01",
+   "file": "styles/s01.css",
+   "at": 9785,
+   "line": 196,
+   "bytes": 258462,
+   "attrs": ""
+  },
+  {
+   "id": "s02",
+   "file": "styles/s02.css",
+   "at": 268263,
+   "line": 4467,
+   "bytes": 5038,
+   "attrs": ""
+  },
+  {
+   "id": "s03",
+   "file": "styles/s03.css",
+   "at": 273317,
+   "line": 4527,
+   "bytes": 2337,
+   "attrs": ""
+  },
+  {
+   "id": "s04",
+   "file": "styles/s04.css",
+   "at": 294803,
+   "line": 4876,
+   "bytes": 12547,
+   "attrs": ""
+  },
+  {
+   "id": "s05",
+   "file": "styles/s05.css",
+   "at": 311909,
+   "line": 4890,
+   "bytes": 3214,
+   "attrs": ""
+  },
+  {
+   "id": "s06",
+   "file": "styles/s06.css",
+   "at": 418099,
+   "line": 6592,
+   "bytes": 5429,
+   "attrs": ""
+  },
+  {
+   "id": "s07",
+   "file": "styles/s07.css",
+   "at": 434553,
+   "line": 6788,
+   "bytes": 4763,
+   "attrs": ""
+  },
+  {
+   "id": "s08",
+   "file": "styles/s08.css",
+   "at": 446866,
+   "line": 6972,
+   "bytes": 10616,
+   "attrs": ""
+  },
+  {
+   "id": "s09",
+   "file": "styles/s09.css",
+   "at": 551538,
+   "line": 7479,
+   "bytes": 10621,
+   "attrs": ""
+  },
+  {
+   "id": "s10",
+   "file": "styles/s10.css",
+   "at": 571674,
+   "line": 8122,
+   "bytes": 15309,
+   "attrs": ""
+  },
+  {
+   "id": "s11",
+   "file": "styles/s11.css",
+   "at": 1242829,
+   "line": 22070,
+   "bytes": 14,
+   "attrs": ""
+  },
+  {
+   "id": "s12",
+   "file": "styles/s12.css",
+   "at": 1636510,
+   "line": 27542,
+   "bytes": 3612,
+   "attrs": ""
+  },
+  {
+   "id": "s13",
+   "file": "styles/s13.css",
+   "at": 1642416,
+   "line": 27607,
+   "bytes": 5149,
+   "attrs": ""
+  },
+  {
+   "id": "s14",
+   "file": "styles/s14.css",
+   "at": 1673863,
+   "line": 28266,
+   "bytes": 11068,
+   "attrs": ""
+  },
+  {
+   "id": "s15",
+   "file": "styles/s15.css",
+   "at": 1754500,
+   "line": 29373,
+   "bytes": 4136,
+   "attrs": ""
+  },
+  {
+   "id": "s16",
+   "file": "styles/s16.css",
+   "at": 1769352,
+   "line": 29627,
+   "bytes": 3343,
+   "attrs": ""
+  },
+  {
+   "id": "s17",
+   "file": "styles/s17.css",
+   "at": 1777686,
+   "line": 29747,
+   "bytes": 15338,
+   "attrs": ""
+  },
+  {
+   "id": "s18",
+   "file": "styles/s18.css",
+   "at": 1829963,
+   "line": 30745,
+   "bytes": 4465,
+   "attrs": "id=\"foxStoreCss\""
+  }
+ ],
+ "scripts": [
+  {
+   "id": "j01",
+   "file": "app/j01.js",
+   "at": 50,
+   "line": 4,
+   "bytes": 2144,
+   "attrs": ""
+  },
+  {
+   "id": "j02",
+   "file": "app/j02.js",
+   "at": 2212,
+   "line": 33,
+   "bytes": 2614,
+   "attrs": ""
+  },
+  {
+   "id": "j03",
+   "file": "app/j03.js",
+   "at": 4845,
+   "line": 91,
+   "bytes": 1561,
+   "attrs": ""
+  },
+  {
+   "id": "j04",
+   "file": "app/j04.js",
+   "at": 6426,
+   "line": 130,
+   "bytes": 2033,
+   "attrs": ""
+  },
+  {
+   "id": "j05",
+   "file": "app/j05.js",
+   "at": 8477,
+   "line": 171,
+   "bytes": 856,
+   "attrs": ""
+  },
+  {
+   "id": "j06",
+   "file": "app/j06.js",
+   "at": 281664,
+   "line": 4660,
+   "bytes": 613,
+   "attrs": ""
+  },
+  {
+   "id": "j07",
+   "file": "app/j07.js",
+   "at": 429923,
+   "line": 6698,
+   "bytes": 4514,
+   "attrs": ""
+  },
+  {
+   "id": "j08",
+   "file": "app/j08.js",
+   "at": 440103,
+   "line": 6844,
+   "bytes": 6642,
+   "attrs": ""
+  },
+  {
+   "id": "j09",
+   "file": "app/j09.js",
+   "at": 459071,
+   "line": 7092,
+   "bytes": 92340,
+   "attrs": ""
+  },
+  {
+   "id": "j10",
+   "file": "app/j10.js",
+   "at": 566298,
+   "line": 7952,
+   "bytes": 5244,
+   "attrs": ""
+  },
+  {
+   "id": "j11",
+   "file": "app/j11.js",
+   "at": 594547,
+   "line": 8718,
+   "bytes": 9292,
+   "attrs": ""
+  },
+  {
+   "id": "j12",
+   "file": "app/j12.js",
+   "at": 603949,
+   "line": 8975,
+   "bytes": 739428,
+   "attrs": ""
+  },
+  {
+   "id": "j13",
+   "file": "app/j13.js",
+   "at": 1343395,
+   "line": 24452,
+   "bytes": 295,
+   "attrs": ""
+  },
+  {
+   "id": "j14",
+   "file": "app/j14.js",
+   "at": 1343708,
+   "line": 24457,
+   "bytes": 24232,
+   "attrs": ""
+  },
+  {
+   "id": "j15",
+   "file": "app/j15.js",
+   "at": 1367959,
+   "line": 25002,
+   "bytes": 206710,
+   "attrs": ""
+  },
+  {
+   "id": "j16",
+   "file": "app/j16.js",
+   "at": 1574687,
+   "line": 27386,
+   "bytes": 61713,
+   "attrs": ""
+  },
+  {
+   "id": "j17",
+   "file": "app/j17.js",
+   "at": 1650271,
+   "line": 27699,
+   "bytes": 23516,
+   "attrs": ""
+  },
+  {
+   "id": "j18",
+   "file": "app/j18.js",
+   "at": 1688295,
+   "line": 28470,
+   "bytes": 66186,
+   "attrs": ""
+  },
+  {
+   "id": "j19",
+   "file": "app/j19.js",
+   "at": 1760276,
+   "line": 29448,
+   "bytes": 9058,
+   "attrs": ""
+  },
+  {
+   "id": "j20",
+   "file": "app/j20.js",
+   "at": 1773801,
+   "line": 29685,
+   "bytes": 3867,
+   "attrs": ""
+  },
+  {
+   "id": "j21",
+   "file": "app/j21.js",
+   "at": 1796615,
+   "line": 29945,
+   "bytes": 29911,
+   "attrs": ""
+  },
+  {
+   "id": "j22",
+   "file": "app/j22.js",
+   "at": 1826551,
+   "line": 30660,
+   "bytes": 2028,
+   "attrs": ""
+  },
+  {
+   "id": "j23",
+   "file": "app/j23.js",
+   "at": 1828599,
+   "line": 30707,
+   "bytes": 1278,
+   "attrs": ""
+  },
+  {
+   "id": "j24",
+   "file": "app/j24.js",
+   "at": 1834461,
+   "line": 30794,
+   "bytes": 11581,
+   "attrs": ""
+  },
+  {
+   "id": "j25",
+   "file": "app/j25.js",
+   "at": 1846061,
+   "line": 31048,
+   "bytes": 927,
+   "attrs": ""
+  },
+  {
+   "id": "j26",
+   "file": "app/j26.js",
+   "at": 1847006,
+   "line": 31064,
+   "bytes": 12256,
+   "attrs": ""
+  },
+  {
+   "id": "j27",
+   "file": "app/j27.js",
+   "at": 1859279,
+   "line": 31131,
+   "bytes": 1242,
+   "attrs": ""
+  }
+ ]
+}

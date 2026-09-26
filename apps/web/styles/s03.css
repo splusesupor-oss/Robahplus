@@ -1,0 +1,27 @@
+
+  /* ===== per-tank settings + turn options ===== */
+  .tk-slots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:2px 0 8px;}
+  .tk-slot{font-family:inherit;font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#D9C7B4;}
+  .tk-slot.on{background:linear-gradient(135deg,#FF7A00,#FFB347);color:#231202;border-color:transparent;box-shadow:0 4px 14px rgba(255,122,0,.35);}
+  .tk-slot b{display:block;font-size:10px;font-weight:600;opacity:.85;}
+  .tk-chips{display:inline-flex;gap:5px;flex-wrap:wrap;}
+  .tk-chips button{font-family:inherit;font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:99px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#D9C7B4;}
+  .tk-chips button.on{background:linear-gradient(135deg,#FF7A00,#FFB347);color:#231202;border-color:transparent;}
+  .tk-chips.tk-shells{gap:6px;}
+  .tk-chips.tk-shells .tk-sh{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px 6px;font-size:10.5px;min-width:62px;}
+  .tk-shell-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .tk-chips.tk-shells canvas{width:62px;height:31px;display:block;}
+  .tk-cfg{margin:10px 0 4px;padding:10px 10px 8px;border-radius:16px;border:1px solid rgba(255,140,40,.25);
+    background:linear-gradient(180deg,rgba(40,28,18,.85),rgba(22,16,11,.85));text-align:right;}
+  .tk-cfg-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:7px;}
+  .tk-cfg-head b{font-size:12.5px;color:#FFC98A;}
+  .tk-cfg-head i{font-size:10.5px;color:#9d8b78;font-style:normal;}
+  .tk-cfg-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;}
+  .tk-cfg-lbl{font-size:11.5px;color:#C6B4A1;white-space:nowrap;}
+  .tk-cfg-auto{font-size:11.5px;color:#FFC98A;text-align:left;line-height:1.7;}
+  .tk-cfg-auto b{color:#FFE7C2;}
+  .tk-order{font-size:11px;color:#FFC98A;line-height:1.9;margin:4px 0 8px;text-align:center;}
+  .tk-btn.ghost.next{margin:8px 0 0;background:rgba(255,255,255,.09);color:#FFC98A;border:1px dashed rgba(255,180,90,.45);min-height:42px;font-size:12.5px;}
+  @media (max-width:420px){.tk-cfg-row{flex-direction:column;align-items:flex-start;gap:4px;}}

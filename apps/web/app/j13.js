@@ -1,0 +1,4 @@
+
+window.__qzMascot="/static/278b0fbbbe966622a308ea034ab2cbc14128afb172f75b4508210e39b80b7bcf.webp";
+window.__qzBg="/static/fdc5fcc0dd54ff5edb531bfff4e8044abc2eb360d1390e8645ed5de39dc888cb.webp";
+window.__qzWaitFox="/static/992eb1e119aa4b3dc0683b0d66f40c4aa3491f1209c6e122fbf818bad9aaf3cf.webp";

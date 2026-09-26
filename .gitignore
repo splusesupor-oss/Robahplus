@@ -1,0 +1,47 @@
+# ── secrets, always ───────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.keystore
+*.jks
+service-account*.json
+firebase-*.json
+tools/.secret-findings.json
+
+# ── node / deno / build output ────────────────────────────────────────────────
+node_modules/
+.npm/
+.deno/
+coverage/
+*.log
+npm-debug.log*
+yarn-error.log*
+dist-*/
+apps/web/build/
+apps/web/.wrangler/
+.wrangler/
+apps/mobile/**/build/
+apps/mobile/**/outputs/
+apps/mobile/node_modules/
+apps/mobile/android/.gradle/
+apps/mobile/ios/Pods/
+
+# ── local test database (created by tools/test-db.sh) ─────────────────────────
+.pgdata
+.pgpass
+
+# ── supabase local dev ────────────────────────────────────────────────────────
+supabase/.branches/
+supabase/.temp/
+supabase/config.toml.local
+
+# ── editors / OS ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~

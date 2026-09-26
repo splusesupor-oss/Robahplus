@@ -1,0 +1,59 @@
+
+  /* ===== TANK PICKER (5-tank arena) ===== */
+  .tk-ov#tkPick{align-items:flex-start;overflow-y:auto;padding:14px 10px 26px;}
+  .tk-card.wide{max-width:560px;width:100%;}
+  .tk-pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:9px;margin:12px 0 6px;}
+  .tk-pcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px 9px;
+    border-radius:16px;border:1px solid rgba(255,140,40,.28);background:linear-gradient(180deg,rgba(46,32,20,.92),rgba(24,17,12,.92));
+    color:#F3E7DA;font-family:inherit;cursor:pointer;transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease;}
+  .tk-pcard:active{transform:scale(.97);}
+  .tk-pcard.on{border-color:var(--tc,#FF9A3C);box-shadow:0 0 0 2px rgba(255,154,60,.35),0 10px 26px rgba(0,0,0,.45);}
+  .tk-pcard.on:after{content:'✔';position:absolute;top:6px;inset-inline-start:6px;width:20px;height:20px;border-radius:50%;
+    display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--tc,#FF9A3C);color:#1b1109;}
+  .tk-pc-badge{position:absolute;top:6px;inset-inline-end:6px;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:99px;
+    background:rgba(255,255,255,.12);color:#D9C7B4;}
+  .tk-pc-badge.new{background:linear-gradient(135deg,#FF7A00,#FFB347);color:#231202;}
+  .tk-pcard.locked{opacity:.85;}
+  .tk-pcard.locked:active{transform:none;}
+  .tk-lock{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:30px;z-index:3;
+    filter:drop-shadow(0 3px 8px rgba(0,0,0,.65));}
+  .tk-pcard.locked .tk-pc-art{filter:grayscale(.4) brightness(.75);}
+  .tk-chips .tk-sh[data-locked="1"]{opacity:.55;filter:grayscale(.4);cursor:not-allowed;}
+  .tk-chips .tk-sh[data-locked="1"]:active{transform:none;}
+  .tk-shlock{font-size:12px;line-height:1;}
+  .tk-pc-art{width:100%;height:auto;max-height:132px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5));}
+  .tk-pc-name{font-size:13.5px;font-weight:800;margin-top:2px;}
+  .tk-pc-sub{font-size:10.5px;color:#B9A794;font-style:normal;line-height:1.5;text-align:center;}
+  .tk-pc-row{display:flex;gap:7px;font-size:10.5px;color:#FFC98A;margin-top:3px;opacity:.95;}
+  .tk-pick-hint{font-size:11.5px;color:#FFC98A;min-height:17px;margin:2px 0 8px;}
+  /* ---- tank shop: buy button + minimal purchase dialog ---- */
+  .tk-pcard{text-align:center;}
+  .tk-pc-buy{margin-top:6px;font-family:inherit;font-size:11px;font-weight:800;padding:5px 11px;border-radius:99px;cursor:pointer;
+    border:1px solid rgba(255,180,90,.55);background:linear-gradient(135deg,#FF7A00,#FFB347);color:#231202;
+    display:inline-flex;align-items:center;gap:4px;line-height:1.5;box-shadow:0 4px 12px rgba(255,122,0,.3);}
+  .tk-pc-buy:active{transform:scale(.96);}
+  .tk-pcard.locked .tk-pc-buy{opacity:1;filter:none;cursor:pointer;}
+  .tk-chips .tk-sh-buy{font-family:inherit;font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:99px;cursor:pointer;
+    border:1px solid rgba(255,180,90,.55);background:linear-gradient(135deg,#FF7A00,#FFB347);color:#231202;line-height:1.5;}
+  .tk-chips .tk-sh-buy:active{transform:scale(.96);}
+  .tkbuy-ov{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:18px;
+    background:rgba(10,6,3,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,visibility .18s ease;}
+  .tkbuy-ov.show{opacity:1;visibility:visible;pointer-events:auto;}
+  .tkbuy{width:100%;max-width:300px;background:linear-gradient(180deg,#2A1B10 0%,#150F0B 100%);
+    border:1px solid rgba(255,122,0,.42);border-radius:20px;padding:16px 15px 14px;text-align:center;color:#F3E7DA;
+    font-family:inherit;direction:rtl;box-shadow:0 22px 60px rgba(0,0,0,.85),0 0 34px rgba(255,122,0,.22);}
+  .tkbuy-ico{font-size:30px;line-height:1;margin-bottom:6px;}
+  .tkbuy-name{font-size:14.5px;font-weight:800;margin-bottom:2px;}
+  .tkbuy-price{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;color:#FFC98A;
+    background:rgba(255,122,0,.12);border:1px solid rgba(255,180,90,.3);border-radius:99px;padding:4px 12px;margin:6px 0 8px;}
+  .tkbuy-q{font-size:12.5px;color:#E6D6C4;margin:2px 0 6px;line-height:1.8;}
+  .tkbuy-bal{font-size:11px;color:#B9A794;margin-bottom:8px;}
+  .tkbuy-bal b{color:#FFC98A;}
+  .tkbuy-msg{font-size:11.5px;color:#ff9a8a;min-height:16px;margin-bottom:8px;line-height:1.7;}
+  .tkbuy-row{display:flex;gap:8px;}
+  .tkbuy-btn{flex:1;font-family:inherit;font-size:12.5px;font-weight:800;padding:9px 6px;border-radius:12px;cursor:pointer;border:none;min-height:40px;}
+  .tkbuy-btn.buy{background:linear-gradient(135deg,#FF7A00,#FFB347);color:#231202;box-shadow:0 6px 18px rgba(255,122,0,.3);}
+  .tkbuy-btn.no{background:rgba(255,255,255,.08);color:#D9C7B4;border:1px solid rgba(255,255,255,.16);}
+  .tkbuy-btn:disabled{opacity:.6;cursor:default;}
+  @media (max-width:420px){.tk-pick-grid{grid-template-columns:repeat(2,1fr);} .tk-pc-art{max-height:112px;}}

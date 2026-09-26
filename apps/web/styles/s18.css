@@ -1,0 +1,48 @@
+
+.fxs-ov{position:fixed;inset:0;z-index:99999;display:none;align-items:flex-end;justify-content:center;background:rgba(24,15,9,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;transition:opacity .22s ease}
+.fxs-ov.show{display:flex;opacity:1}
+.fxs-sheet{width:100%;max-width:520px;max-height:92vh;overflow-y:auto;background:linear-gradient(180deg,#fffaf5 0%,#fff 42%);border-radius:28px 28px 0 0;box-shadow:0 -18px 60px rgba(120,53,15,.32);padding:8px 18px 26px;transform:translateY(26px);transition:transform .26s cubic-bezier(.22,1,.36,1);direction:rtl;font-family:inherit;-webkit-overflow-scrolling:touch}
+.fxs-ov.show .fxs-sheet{transform:translateY(0)}
+@media(min-width:720px){.fxs-ov{align-items:center}.fxs-sheet{border-radius:26px;max-height:88vh;transform:translateY(16px) scale(.98)}.fxs-ov.show .fxs-sheet{transform:translateY(0) scale(1)}}
+.fxs-grab{width:44px;height:5px;border-radius:99px;background:#f0c9a8;margin:6px auto 14px}
+.fxs-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.fxs-title{font-size:18px;font-weight:900;color:#7c2d12;flex:1;display:flex;align-items:center;gap:8px}
+.fxs-x{border:0;background:#fdeee0;color:#9a3412;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1;flex:none}
+.fxs-x:hover{background:#fbd9bd}
+.fxs-x:focus-visible{outline:3px solid #fb923c;outline-offset:2px}
+.fxs-p{font-size:14px;line-height:1.9;color:#5b463a;margin:8px 0}
+.fxs-support{display:flex;align-items:center;gap:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:18px;padding:14px;margin:14px 0}
+.fxs-ava{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#fb923c,#ea580c);display:grid;place-items:center;font-size:22px;flex:none}
+.fxs-support b{display:block;font-size:15px;color:#7c2d12}
+.fxs-support span{font-size:13px;color:#c2410c;direction:ltr}
+.fxs-bal{display:flex;gap:10px;margin:14px 0}
+.fxs-bal div{flex:1;background:#fff;border:1px solid #fde3c7;border-radius:16px;padding:10px 12px;text-align:center;font-weight:800;color:#7c2d12;font-size:14px}
+.fxs-bal small{display:block;font-size:11px;color:#a1806f;font-weight:600;margin-top:2px}
+.fxs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:6px}
+@media(min-width:520px){.fxs-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.fxs-card{position:relative;background:#fff;border:2px solid #fde3c7;border-radius:18px;padding:14px 8px;text-align:center;cursor:pointer;transition:transform .16s ease,border-color .16s,box-shadow .16s;font-family:inherit;color:inherit}
+.fxs-card:hover:not(:disabled){transform:translateY(-3px);border-color:#fdba74;box-shadow:0 10px 24px rgba(234,88,12,.16)}
+.fxs-card:active:not(:disabled){transform:translateY(-1px) scale(.985)}
+.fxs-card:focus-visible{outline:3px solid #fb923c;outline-offset:2px}
+.fxs-card[aria-pressed="true"]{border-color:#ea580c;box-shadow:0 0 0 4px rgba(251,146,60,.22);background:#fff7ed}
+.fxs-card:disabled{opacity:.45;cursor:not-allowed}
+.fxs-ic{font-size:26px;line-height:1}
+.fxs-d{font-weight:900;color:#7c2d12;font-size:15px;margin-top:6px}
+.fxs-c{font-size:12px;color:#a16207;margin-top:4px;font-weight:700}
+.fxs-no{position:absolute;top:6px;left:8px;font-size:10px;background:#fee2e2;color:#b91c1c;border-radius:99px;padding:2px 7px;font-weight:800}
+.fxs-btn{width:100%;border:0;border-radius:16px;padding:14px;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;transition:filter .15s,opacity .15s}
+.fxs-btn:disabled{opacity:.6;cursor:progress}
+.fxs-btn:focus-visible{outline:3px solid #fff;outline-offset:-4px}
+.fxs-pri{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;box-shadow:0 8px 22px rgba(234,88,12,.3)}
+.fxs-pri:hover:not(:disabled){filter:brightness(1.06)}
+.fxs-sec{background:#f5f5f4;color:#57534e;margin-top:8px}
+.fxs-sec:hover:not(:disabled){filter:brightness(.96)}
+.fxs-row{display:flex;gap:8px;margin-top:14px}
+.fxs-row .fxs-btn{margin-top:0}
+.fxs-ok{text-align:center;padding:6px 0 2px}
+.fxs-ok .big{font-size:44px;line-height:1}
+.fxs-msg{margin-top:10px;font-size:13px;text-align:center;min-height:20px;font-weight:700}
+.fxs-msg.err{color:#b91c1c}
+.fxs-msg.ok{color:#15803d}
+.fxs-spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:fxsspin .7s linear infinite;vertical-align:-2px;margin-left:6px}
+@keyframes fxsspin{to{transform:rotate(360deg)}}

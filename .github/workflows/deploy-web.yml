@@ -1,0 +1,88 @@
+name: Deploy — web (Cloudflare, manual gate)
+
+# The web client stays on Cloudflare Workers; Supabase is not a static file host.  This workflow
+# exists so the cutover can be shipped from CI, but it is **manual-only on purpose**: the Cloudflare
+# account is not touched by any automated push, per the operator's instruction.  Triggering it
+# publishes apps/web/build/index.html + static/ as a new Worker version.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DEPLOY to publish apps/web/build to the Cloudflare Worker'
+        required: true
+        type: string
+      git_ref:
+        description: 'Branch or tag to deploy'
+        required: false
+        default: 'main'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: build + publish the single-file app
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: production
+    if: ${{ github.event.inputs.confirm == 'DEPLOY' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_ref || 'main' }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build the deployable dir (golden + reviewed overrides + static assets)
+        run: |
+          npm run build
+          npm run check:client          # parses, matches golden, carries no secrets
+
+      - name: Require Cloudflare credentials
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID are not set in GitHub Secrets — refusing to deploy."
+            exit 1
+          fi
+        env:
+          # `secrets` is not readable in `run:`; the mapping above is the usual workaround
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Publish the Worker (unchanged deployment target)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          FOX_ENV: ${{ inputs.git_ref }}
+        run: |
+          # The legacy process PUT the whole bundle through the Cloudflare API (see legacy/BUNDLE-NOTES.md).
+          # The same shape is kept here so the deployment target and its bindings do not change: only the
+          # HTML/asset payload is republished.  Adjust WORKER_NAME to the existing Worker.
+          WORKER_NAME="${WORKER_NAME:-ai-fox}"
+          test -n "$CLOUDFLARE_API_TOKEN"
+          echo "· would PUT apps/web/build/index.html as Worker '$WORKER_NAME' in account $CLOUDFLARE_ACCOUNT_ID"
+          echo "· this step is a placeholder for your existing deploy script (patch_vNNN_*.py / wrangler deploy)"
+          echo "· set the real command here once you have reviewed it — see docs/WEB-HOSTING.md"
+          exit 1
+
+      - name: Summary
+        if: success()
+        run: |
+          {
+            echo "### Web deploy"
+            echo "- source: \`apps/web/build/index.html\` ($(wc -c < apps/web/build/index.html) bytes)"
+            echo "- static assets: $(ls apps/web/static | wc -l) files"
+            echo "- ref: ${FX}"
+          } >> "$GITHUB_STEP_SUMMARY"
+        env:
+          FX: ${{ inputs.git_ref }}

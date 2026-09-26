@@ -1,0 +1,85 @@
+# Supabase CLI configuration for Robah Plus.
+# Safe to commit: no keys, no tokens — `project_id` is a local identifier only.
+# The real project reference lives in SUPABASE_PROJECT_REF / `supabase link`.
+project_id = "robahplus"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "app", "storage", "graphql_public"]
+extra_search_path = ["public", "app", "extensions"]
+max_rows = 100
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://ai-fox.aifox-bot.workers.dev"]
+enable_signup = true
+# Phone/OTP is the only Robah Plus identity: the edge function `auth` issues the code,
+# and GoTrue owns the user.  Turn on Twilio Verify here once the project has credentials.
+[auth.sms]
+enable_signup = true
+enable_confirmations = true
+template = "کد روباه پلاس: {{ .Code }}"
+
+[auth.sms.twilio]
+enabled = false
+# account_sid / message_service_sid / admin phone numbers → `supabase secrets set`, never here.
+
+[auth.email]
+enable_signup = false
+enable_confirmations = false
+
+[realtime]
+enabled = true
+
+[realtime.messages]
+max_clients_per_node = 500
+
+[storage]
+enabled = true
+file_size_limit = "20MiB"
+# Buckets are created by migration 0010 (media); the APK and web both use them.
+
+[storage.image_transformation]
+enabled = true
+
+[edge_runtime]
+enabled = true
+policy = "per_worker"
+inspector_port = 8083
+
+[functions.auth]
+verify_jwt = true
+[functions.wallet]
+verify_jwt = true
+[functions.group]
+verify_jwt = true
+[functions.messages]
+verify_jwt = true
+[functions.rewards]
+verify_jwt = true
+[functions.media]
+verify_jwt = true
+[functions.moderation]
+verify_jwt = true
+[functions.ai]
+verify_jwt = true
+[functions.notifications]
+verify_jwt = true
+
+[analytics]
+enabled = false

@@ -1,0 +1,43 @@
+{
+  "lock": false,
+  "fmt": {
+    "lineWidth": 120,
+    "semiColons": true,
+    "singleQuote": true,
+    "exclude": [
+      "apps/web"
+    ]
+  },
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ],
+      "exclude": [
+        "no-explicit-any"
+      ]
+    },
+    "exclude": [
+      "no-explicit-any",
+      "no-window-prefix"
+    ],
+    "include": [
+      "supabase/functions"
+    ]
+  },
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "esnext"
+    ],
+    "strict": true,
+    "noImplicitAny": false
+  },
+  "tasks": {
+    "check": "deno check supabase/functions/**/*.ts",
+    "lint": "deno lint supabase/functions",
+    "fmt": "deno fmt supabase/functions",
+    "fmt:check": "deno fmt --check supabase/functions",
+    "verify": "deno check supabase/functions/**/*.ts && deno lint supabase/functions && deno fmt --check supabase/functions"
+  }
+}

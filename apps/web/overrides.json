@@ -1,0 +1,20 @@
+{
+  "_comment": [
+    "Reviewed literal patches applied by tools/03-assemble-web.mjs when building apps/web/build.",
+    "Every entry needs: id, search (exact string in the golden file), replace, reason, and optionally",
+    "optional:true (skip instead of failing when the pattern is gone) and disabled:true (inert).",
+    "An entry whose pattern is missing FAILS the build on purpose: it means the golden file moved and",
+    "the cutover patch list has to be re-checked rather than half-applied.",
+    "The golden file itself stays untouched until the moment you flip the client to Supabase."
+  ],
+  "entries": [
+    {
+      "id": "api-base-to-supabase",
+      "disabled": true,
+      "optional": true,
+      "search": "const API_BASE = ''",
+      "replace": "const API_BASE = '' /* FOX_API_BASE from apps/web/supabase/config.js */",
+      "reason": "Placeholder for cutover: point the legacy api() helper at /functions/v1 and load apps/web/supabase/*.js first. Re-enable with the exact strings found in apps/web/golden/index.html."
+    }
+  ]
+}

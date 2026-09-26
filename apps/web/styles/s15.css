@@ -1,0 +1,50 @@
+
+  .foxfont-overlay{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-end;justify-content:center;
+    background:rgba(40,22,8,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    opacity:0;pointer-events:none;transition:opacity .25s ease;}
+  .foxfont-overlay.open{opacity:1;pointer-events:auto;}
+  .foxfont-sheet{width:100%;max-width:520px;max-height:86vh;display:flex;flex-direction:column;
+    background:var(--theme-surface,#fff);color:var(--theme-text,#3A2A1A);
+    border-radius:24px 24px 0 0;border:1px solid var(--theme-border,#E8D8C8);border-bottom:none;
+    box-shadow:0 -10px 40px rgba(120,70,20,.18);transform:translateY(100%);transition:transform .32s cubic-bezier(.22,1,.36,1);}
+  .foxfont-overlay.open .foxfont-sheet{transform:translateY(0);}
+  .foxfont-grabber{display:block;width:42px;height:5px;border-radius:99px;background:var(--theme-border,#E8D8C8);margin:10px auto 2px;}
+  .foxfont-head{display:flex;align-items:center;gap:12px;padding:10px 16px 12px;}
+  .foxfont-ic{flex:0 0 auto;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;
+    background:var(--theme-primary-soft,#FFF0E1);color:var(--theme-primary,#FF7A00);}
+  .foxfont-titles{display:flex;flex-direction:column;flex:1;min-width:0;}
+  .foxfont-titles b{font-size:16px;font-weight:800;}
+  .foxfont-titles span{font-size:12px;color:var(--muted,#8a7a69);margin-top:2px;}
+  .foxfont-close{flex:0 0 auto;width:34px;height:34px;border-radius:11px;border:1px solid var(--theme-border,#E8D8C8);
+    background:transparent;color:var(--theme-text,#3A2A1A);font-size:16px;cursor:pointer;line-height:1;}
+  .foxfont-body{padding:4px 16px 18px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .foxfont-input-wrap{position:sticky;top:0;background:var(--theme-surface,#fff);padding:6px 0 10px;z-index:2;}
+  #foxFontInput{width:100%;box-sizing:border-box;font-size:16px;padding:13px 14px;border-radius:15px;
+    border:1.5px solid var(--theme-border,#E8D8C8);background:var(--theme-background,#FFF6EC);color:var(--theme-text,#3A2A1A);
+    outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;}
+  #foxFontInput:focus{border-color:var(--theme-primary,#FF7A00);box-shadow:0 0 0 4px var(--theme-primary-soft,#FFF0E1);}
+  .foxfont-empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
+    padding:34px 16px;color:var(--muted,#8a7a69);}
+  .foxfont-empty svg{opacity:.55;}
+  .foxfont-empty p{font-size:13.5px;margin:0;line-height:1.7;}
+  .foxfont-list{display:flex;flex-direction:column;gap:10px;}
+  .foxfont-row{border:1px solid var(--theme-border,#E8D8C8);border-radius:16px;padding:11px 13px;
+    background:linear-gradient(180deg,var(--theme-surface,#fff),var(--theme-background,#FFF6EC));}
+  .foxfont-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;}
+  .foxfont-style-name{font-size:11.5px;font-weight:700;color:var(--theme-primary-strong,#E86500);
+    letter-spacing:.2px;text-transform:uppercase;}
+  .foxfont-copy{flex:0 0 auto;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;
+    padding:6px 13px;border-radius:99px;background:var(--theme-primary,#FF7A00);color:var(--theme-primary-text,#fff);
+    transition:transform .12s ease,filter .2s ease;}
+  .foxfont-copy:active{transform:scale(.94);}
+  .foxfont-copy:hover{filter:brightness(1.05);}
+  .foxfont-text{font-size:21px;line-height:1.9;word-break:break-word;white-space:pre-wrap;
+    -webkit-user-select:text;user-select:text;color:var(--theme-text,#3A2A1A);}
+  #foxFontToast{position:absolute;left:50%;bottom:22px;transform:translate(-50%,16px);
+    background:rgba(40,22,8,.92);color:#fff;font-size:13px;font-weight:700;padding:10px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;white-space:nowrap;z-index:5;}
+  #foxFontToast.show{opacity:1;transform:translate(-50%,0);}
+  @media (min-width:560px){
+    .foxfont-overlay{align-items:center;}
+    .foxfont-sheet{border-radius:24px;border-bottom:1px solid var(--theme-border,#E8D8C8);max-height:80vh;}
+  }

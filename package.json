@@ -1,0 +1,26 @@
+{
+  "name": "robahplus",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Robah Plus (\u0631\u0648\u0628\u0627\u0647 \u067e\u0644\u0627\u0633) \u2014 Supabase backend + the current web client, migrated from a single Cloudflare Worker.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "extract:legacy": "node tools/01-extract-legacy.mjs",
+    "extract:web": "node tools/02-extract-web.mjs",
+    "check:split": "node tools/02-extract-web.mjs --check",
+    "build": "node tools/03-assemble-web.mjs",
+    "serve": "node tools/03-assemble-web.mjs && python3 -m http.server 8080 --directory apps/web/build",
+    "test:db": "bash tools/test-db.sh",
+    "verify:functions": "deno task verify",
+    "check:secrets": "node tools/04-check-secrets.mjs",
+    "test": "npm run check:split && npm run test:db && npm run check:secrets",
+    "db:push": "supabase db push",
+    "deploy:functions": "supabase functions deploy",
+    "deploy:check": "supabase functions deploy --dry-run",
+    "check:client": "node tools/05-check-client.mjs",
+    "check:all": "npm run check:split && npm run build && npm run check:client && npm run check:secrets"
+  }
+}
